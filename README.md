@@ -1,1 +1,0 @@
-## This is for leaning Next.js
