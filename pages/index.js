@@ -18,16 +18,22 @@ const DUMMY_DATA = [
       }
 ];
 
-const HomePage = () => {
-    const [loadedData, setLoadedData] = useState([]);
-
-    useEffect(() => {
-      setLoadedData(DUMMY_DATA);
-    }, []);
-
+const HomePage = (props) => {
     return (
-        <MeetupList meetups={loadedData}/>
+        <MeetupList meetups={props.meetups}/>
     );
 }
 
+/// it has to be named getStaticProps. This is a special function. It won't get to the client. In other words this function's code 
+/// will never get to client side and won't run there. Instead it will run when we build our application. This funciton will provide the neccecery data
+// we need in our components and then our component can't take that data and display it so it's also there in HTML code and not insert via react. It's good for 
+// search engines
+export const getStaticProps = async () => {
+  return {
+    props: {
+      meetups: DUMMY_DATA
+    },
+    revalidate: 1 // this is the number of second after which the static page will be generated so the user see the latest data.
+  }
+}
 export default HomePage;
