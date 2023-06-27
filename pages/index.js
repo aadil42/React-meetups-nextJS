@@ -24,16 +24,31 @@ const HomePage = (props) => {
     );
 }
 
+// it has to be named getServerSideProps. It's just like  getStaticProps. But
+// this will re-generate the page on each request. and you don't have to genereta the page after some spicific time like  in getStaticProps
+
+export const getServerSideProps = async (context) => {
+  // the context parameter  will have access to request and response.
+  const res = context.res;
+  const req = context.req;
+  
+  return {
+    props: {
+      meetups: DUMMY_DATA
+    }
+  }
+
+}
 /// it has to be named getStaticProps. This is a special function. It won't get to the client. In other words this function's code 
 /// will never get to client side and won't run there. Instead it will run when we build our application. This funciton will provide the neccecery data
 // we need in our components and then our component can't take that data and display it so it's also there in HTML code and not insert via react. It's good for 
 // search engines
-export const getStaticProps = async () => {
-  return {
-    props: {
-      meetups: DUMMY_DATA
-    },
-    revalidate: 1 // this is the number of second after which the static page will be generated so the user see the latest data.
-  }
-}
+// export const getStaticProps = async () => {
+//   return {
+//     props: {
+//       meetups: DUMMY_DATA
+//     },
+//     revalidate: 1 // this is the number of second after which the static page will be generated so the user see the latest data.
+//   }
+// }
 export default HomePage;
