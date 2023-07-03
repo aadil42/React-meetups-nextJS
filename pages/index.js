@@ -1,3 +1,4 @@
+import { MongoClient } from 'mongodb';
 import MeetupList from '../components/meetups/MeetupList';
 import {useEffect, useState} from 'react';
 
@@ -27,28 +28,46 @@ const HomePage = (props) => {
 // it has to be named getServerSideProps. It's just like  getStaticProps. But
 // this will re-generate the page on each request. and you don't have to genereta the page after some spicific time like  in getStaticProps
 
-export const getServerSideProps = async (context) => {
-  // the context parameter  will have access to request and response.
-  const res = context.res;
-  const req = context.req;
+// export const getServerSideProps = async (context) => {
+//   // the context parameter  will have access to request and response.
+//   const res = context.res;
+//   const req = context.req;
   
-  return {
-    props: {
-      meetups: DUMMY_DATA
-    }
-  }
+//   return {
+//     props: {
+//       meetups: DUMMY_DATA
+//     }
+//   }
 
-}
+// }
 /// it has to be named getStaticProps. This is a special function. It won't get to the client. In other words this function's code 
 /// will never get to client side and won't run there. Instead it will run when we build our application. This funciton will provide the neccecery data
 // we need in our components and then our component can't take that data and display it so it's also there in HTML code and not insert via react. It's good for 
 // search engines
-// export const getStaticProps = async () => {
-//   return {
-//     props: {
-//       meetups: DUMMY_DATA
-//     },
-//     revalidate: 1 // this is the number of second after which the static page will be generated so the user see the latest data.
-//   }
-// }
+export const getStaticProps = async () => {
+
+  // we're gonna get our data from mongodb here.
+
+  const client = await MongoClient.connect('mongodb+srv://user-1:fsIOIOQEJWlncaa@cluster1.cwx9jhy.mongodb.net/');
+  const db = client.db();
+
+  const meetupsCollection = db.collection('meetups');
+  const meetups = await meetupsCollection.find().toArray();
+
+  client.close();
+
+  return {
+    props: {
+      meetups: meetups.map((meetup) => {
+        return {
+          title: meetup.title,
+          address: meetup.address,
+          image: meetup.image,
+          id: meetup._id.toString()
+        }
+      })
+    },
+    revalidate: 1 // this is the number of second after which the static page will be generated so the user see the latest data.
+  }
+}
 export default HomePage;

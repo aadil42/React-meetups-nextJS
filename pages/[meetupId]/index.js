@@ -30,7 +30,7 @@ export const getStaticPaths = async () => {
 export const getStaticProps = async (context) => {
 
     const id = context.params.meetupId;
-    console.log(id);
+    // console.log(id);
 
     return {
         props: {
